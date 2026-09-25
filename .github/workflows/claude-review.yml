@@ -1,0 +1,56 @@
+# .github/workflows/claude-review.yml
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Annule la review en cours si tu pushes un nouveau commit sur la même PR
+concurrency:
+  group: claude-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    # Pas de review sur les PR en draft (économise ton quota)
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Fais une review de cette pull request.
+
+            Priorités, dans cet ordre :
+            1. Bugs et erreurs de logique (cas limites, None/null, erreurs ignorées, off-by-one)
+            2. Sécurité (injection, secrets en dur, validation d'input manquante)
+            3. Incohérences (appelants non mis à jour, tests qui ne testent plus la bonne chose)
+            4. Tests manquants pour les cas importants
+
+            Règles :
+            - Ignore le style et le formatage (gérés par le linter).
+            - Ne signale que ce qui compte vraiment. Pas de remarques cosmétiques.
+            - Si tu n'es pas sûr d'un problème, dis-le explicitement.
+            - Utilise des commentaires inline sur les lignes concernées pour les problèmes précis.
+            - Termine par un commentaire global court : résumé + verdict (OK / à corriger).
+            - Réponds en français.
+
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
