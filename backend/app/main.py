@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from typing import Annotated
+from fastapi import Depends, FastAPI
+
+from app.core.config import Settings, get_settings
 
 app = FastAPI()
 
 
-@app.get("/")
-def root():
-    return {"message": "hello world"}
+@app.get("/health")
+def health(settings: Annotated[Settings, Depends(get_settings)]):
+    return {"message": settings}
