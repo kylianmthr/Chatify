@@ -49,13 +49,13 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a
-            href="#"
+            href="/sign-in"
             className="text-sm font-medium text-slate-700 hover:text-slate-900"
           >
             Connexion
           </a>
           <a
-            href="#tarifs"
+            href="/sign-in"
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-blue-600/20 transition hover:bg-blue-700"
           >
             Essai gratuit
@@ -89,7 +89,7 @@ export function Navbar() {
             ))}
           </ul>
           <a
-            href="#tarifs"
+            href="/sign-in"
             onClick={() => setOpen(false)}
             className="block rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-medium text-white"
           >
