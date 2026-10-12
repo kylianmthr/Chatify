@@ -35,7 +35,8 @@ def get_current_user(
             audience=settings.jwt_audience,
             issuer=settings.better_auth_url,
         )
-    except jwt.PyJWKError:
+    except jwt.PyJWTError:
+        raise unauthorized
         raise unauthorized
     return CurrentUser(
         id=playload["sub"], email=playload["email"], name=playload.get("name")
