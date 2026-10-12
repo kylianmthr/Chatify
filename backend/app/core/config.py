@@ -11,6 +11,13 @@ class Settings(BaseSettings):
     database_url: str
     groq_api: SecretStr
     google_ai_studio_api: SecretStr
+    better_auth_url: str = "http://localhost:3000"
+    jwt_audience: str = "chatify-api"
+    cors_origins: list[str] = ["http://localhost:3000"]
+
+    @property
+    def jwks_url(self) -> str:
+        return f"{self.better_auth_url}/api/auth/jwks"
 
 
 @lru_cache
