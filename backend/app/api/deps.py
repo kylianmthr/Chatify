@@ -28,7 +28,7 @@ def get_current_user(
         raise unauthorized
     try:
         key = _jwks_client.get_signing_key_from_jwt(creds.credentials)
-        playload = jwt.decode(
+        payload = jwt.decode(
             creds.credentials,
             key.key,
             algorithms=["EdDSA"],
@@ -38,7 +38,7 @@ def get_current_user(
     except jwt.PyJWTError:
         raise unauthorized
     return CurrentUser(
-        id=playload["sub"], email=playload["email"], name=playload.get("name")
+        id=payload["sub"], email=payload["email"], name=payload.get("name")
     )
 
 
