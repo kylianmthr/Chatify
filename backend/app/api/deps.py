@@ -37,7 +37,6 @@ def get_current_user(
         )
     except jwt.PyJWTError:
         raise unauthorized
-        raise unauthorized
     return CurrentUser(
         id=playload["sub"], email=playload["email"], name=playload.get("name")
     )
